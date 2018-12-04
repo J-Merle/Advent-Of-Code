@@ -1,16 +1,20 @@
-CLAIM_LIST = list(open("input.txt", 'r'))
+"""
+Day 3 of the Advent of Code 2018
+https://adventofcode.com/2018/day/3
+"""
 
-def format_line(line):
-    return [int(item) for item in line.replace('#', '').replace(',', ' ').replace(':', '').replace('x', ' ').replace('@', '').split()];
+def format_claim(claim):
+    return [int(item) for item in claim.replace('#', '').replace(',', ' ').replace(':', '').replace('x', ' ').replace('@', '').split()];
 
 
 def init_room(room_size):
     return [[0 for size in range(room_size)] for size in range(room_size)]
 
+CLAIM_LIST = [format_claim(claim) for claim in open("input.txt", 'r')]
+
 def part_one():
     room = init_room(1000)
-    for claim in CLAIM_LIST:
-        (_id, x, y, l, h) = format_line(claim)
+    for (_id, x, y, l, h) in CLAIM_LIST:
         for i in range(y, y+h):
             for j in range(x, x+l):
                 room[i][j] += 1
@@ -21,9 +25,8 @@ def part_two():
     room = init_room(1000)
     overlap_dict = {'overlapped': set(), 'notoverlapped': set()}
 
-    for claim in CLAIM_LIST:
+    for (_id, x, y, l, h) in CLAIM_LIST:
         overlapped = False
-        (_id, x, y, l, h) = format_line(claim)
         for i in range(y, y+h):
             for j in range(x, x+l):
                 previous_value = room[i][j]
