@@ -26,23 +26,22 @@ CLAIM_LIST = [format_claim(claim) for claim in open("input.txt", 'r')]
 
 def main():
     room = init_room(1000)
-    overlap_dict = {'overlapped': set(), 'notoverlapped': set()}
+    not_overlapped = set()
 
     for (_id, x, y, l, h) in CLAIM_LIST:
         overlapped = False
         for i in range(y, y + h):
             for j in range(x, x + l):
                 overlapped |= room[i][j] != 0
-                if overlapped:
-                    overlap_dict['overlapped'].add(_id)
-                    overlap_dict['overlapped'].add(room[i][j])
+                if overlapped and room[i][j] in not_overlapped:
+                    not_overlapped.remove(room[i][j])
                 room[i][j] = -1 if room[i][j] != 0 else _id
 
         if not overlapped:
-            overlap_dict['notoverlapped'].add(_id)
+            not_overlapped.add(_id)
 
     print(sum(1 for sublist in room for x in sublist if x == -1))
-    print(overlap_dict['notoverlapped']- overlap_dict['overlapped'])
+    print(not_overlapped)
 
 if __name__ == '__main__':
     main()
