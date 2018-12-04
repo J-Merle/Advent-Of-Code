@@ -2,9 +2,21 @@
 Day 3 of the Advent of Code 2018
 https://adventofcode.com/2018/day/3
 """
+import re
+
+
 
 def format_claim(claim):
-    return [int(item) for item in claim.replace('#', '').replace(',', ' ').replace(':', '').replace('x', ' ').replace('@', '').split()];
+    # input
+    # #1 @ 432,394: 29x14
+    regexp = '#([0-9]{0,10}) @ ([0-9]{0,10}),([0-9]{0,10}): ([0-9]{0,10})x([0-9]{0,10})'
+    claim_search = re.search(regexp, claim)
+    return (int(claim_search.group(1)),
+            int(claim_search.group(2)),
+            int(claim_search.group(3)),
+            int(claim_search.group(4)),
+            int(claim_search.group(5))
+            )
 
 
 def init_room(room_size):
@@ -12,34 +24,25 @@ def init_room(room_size):
 
 CLAIM_LIST = [format_claim(claim) for claim in open("input.txt", 'r')]
 
-def part_one():
-    room = init_room(1000)
-    for (_id, x, y, l, h) in CLAIM_LIST:
-        for i in range(y, y+h):
-            for j in range(x, x+l):
-                room[i][j] += 1
-
-    print(sum(1 for sublist in room for x in sublist if x > 1))
-
-def part_two():
+def main():
     room = init_room(1000)
     overlap_dict = {'overlapped': set(), 'notoverlapped': set()}
 
     for (_id, x, y, l, h) in CLAIM_LIST:
         overlapped = False
-        for i in range(y, y+h):
-            for j in range(x, x+l):
-                previous_value = room[i][j]
-                overlapped |= previous_value > 0
-                room[i][j] = _id
+        for i in range(y, y + h):
+            for j in range(x, x + l):
+                overlapped |= room[i][j] != 0
                 if overlapped:
                     overlap_dict['overlapped'].add(_id)
-                    overlap_dict['overlapped'].add(previous_value)
+                    overlap_dict['overlapped'].add(room[i][j])
+                room[i][j] = -1 if room[i][j] != 0 else _id
+
         if not overlapped:
             overlap_dict['notoverlapped'].add(_id)
 
+    print(sum(1 for sublist in room for x in sublist if x == -1))
     print(overlap_dict['notoverlapped']- overlap_dict['overlapped'])
 
 if __name__ == '__main__':
-    part_one()
-    part_two()
+    main()
