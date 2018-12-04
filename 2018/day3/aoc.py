@@ -4,31 +4,23 @@ https://adventofcode.com/2018/day/3
 """
 import re
 
+RE_FROM = r'#([0-9]{0,10}) @ ([0-9]{0,10}),([0-9]{0,10}): ([0-9]{0,10})x([0-9]{0,10})'
+RE_TO = r'\1 \2 \3 \4 \5'
 
-
-def format_claim(claim):
-    # input
-    # #1 @ 432,394: 29x14
-    regexp = '#([0-9]{0,10}) @ ([0-9]{0,10}),([0-9]{0,10}): ([0-9]{0,10})x([0-9]{0,10})'
-    claim_search = re.search(regexp, claim)
-    return (int(claim_search.group(1)),
-            int(claim_search.group(2)),
-            int(claim_search.group(3)),
-            int(claim_search.group(4)),
-            int(claim_search.group(5))
-            )
+def format_claim():
+    claim_list = re.sub(RE_FROM, RE_TO, open('input.txt', 'r').read())
+    return [[int(x) for x in claim.split()] for claim in claim_list.strip().split('\n')]
 
 
 def init_room(room_size):
     return [[0 for size in range(room_size)] for size in range(room_size)]
 
-CLAIM_LIST = [format_claim(claim) for claim in open("input.txt", 'r')]
 
-def main():
+def main(claim_list):
     room = init_room(1000)
     not_overlapped = set()
 
-    for (_id, x, y, l, h) in CLAIM_LIST:
+    for (_id, x, y, l, h) in claim_list:
         overlapped = False
         for i in range(y, y + h):
             for j in range(x, x + l):
@@ -44,4 +36,4 @@ def main():
     print(not_overlapped)
 
 if __name__ == '__main__':
-    main()
+    main(format_claim())
