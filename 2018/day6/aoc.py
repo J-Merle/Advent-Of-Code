@@ -8,14 +8,24 @@ def create_map(coord_list):
     max_x = max([x[0] for x in coord_list])
     max_y = max([y[1] for y in coord_list])
     _map = [[0 for y in range(max_y + 1)] for x in range(max_x + 1)]
+    closest_region_size = 0
     for x in range(len(_map)):
         for y in range(len(_map[x])):
             cardinal_distance_list = [cardinal_distance((x, y), coords) for coords in coord_list]
+
             if cardinal_distance_list.count(min(cardinal_distance_list)) > 1:
                 _map[x][y] = -1
             else:
                 _map[x][y] = cardinal_distance_list.index(min(cardinal_distance_list))
-    return _map
+
+            # PART TWO
+            current_distance = sum(cardinal_distance_list)
+            if current_distance < 10000:
+                closest_region_size += 1
+
+    print("Largest finished area = " + str(largest_area(_map, len(coord_list))))
+    print("Closest region size :" + str(closest_region_size))
+
 
 def cardinal_distance(c1, c2):
     return abs(c1[0] - c2[0]) +  abs(c1[1] - c2[1])
@@ -31,21 +41,7 @@ def largest_area(_map, number_of_init_points):
         banned_set.add(item[len(item) - 1])
     return max([sum(x.count(i) for x in _map) for i in {x for x in range(number_of_init_points)} - banned_set])
 
-def closest_region_size(_map, coord_list, max_distance):
-    region_size = 0
-    for x in range(len(_map)):
-        for y in range(len(_map[x])):
-            current_distance = 0
-            for coord in coord_list:
-                current_distance += cardinal_distance(coord, (x, y))
-                if current_distance > max_distance:
-                    break
-            if current_distance < max_distance:
-                region_size += 1
-    return region_size
 
 if __name__ == '__main__':
     coord_list = [parse_input(input_line) for input_line in open('input.txt')]
-    _map = create_map(coord_list)
-    print("Largest finished area = " + str(largest_area(_map, len(coord_list))))
-    print("Closest region size = " + str(closest_region_size(_map, coord_list, 10000)))
+    create_map(coord_list)
