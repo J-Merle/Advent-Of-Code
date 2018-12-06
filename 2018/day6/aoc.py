@@ -1,9 +1,12 @@
+"""
+Day 6 of the adevent of code 2018
+"""
+
 def parse_input(input_line):
     """ given an input "x,x" return a formatted input (x,x) where x are numbers """
     coords = input_line.strip().split(',')
     return (int(coords[0]), int(coords[1]))
 
-     
 def create_map(coord_list):
     max_x = max([x[0] for x in coord_list])
     max_y = max([y[1] for y in coord_list])
@@ -11,12 +14,13 @@ def create_map(coord_list):
     closest_region_size = 0
     for x in range(len(_map)):
         for y in range(len(_map[x])):
-            cardinal_distance_list = [cardinal_distance((x, y), coords) for coords in coord_list]
+            cardinal_distance_list = [abs(x-coords[0]) + abs(y-coords[1]) for coords in coord_list]
 
-            if cardinal_distance_list.count(min(cardinal_distance_list)) > 1:
+            closest = min(cardinal_distance_list)
+            if cardinal_distance_list.count(closest) > 1:
                 _map[x][y] = -1
             else:
-                _map[x][y] = cardinal_distance_list.index(min(cardinal_distance_list))
+                _map[x][y] = cardinal_distance_list.index(closest)
 
             # PART TWO
             current_distance = sum(cardinal_distance_list)
@@ -25,10 +29,6 @@ def create_map(coord_list):
 
     print("Largest finished area = " + str(largest_area(_map, len(coord_list))))
     print("Closest region size :" + str(closest_region_size))
-
-
-def cardinal_distance(c1, c2):
-    return abs(c1[0] - c2[0]) +  abs(c1[1] - c2[1])
 
 def largest_area(_map, number_of_init_points):
     banned_set = set()
@@ -43,5 +43,5 @@ def largest_area(_map, number_of_init_points):
 
 
 if __name__ == '__main__':
-    coord_list = [parse_input(input_line) for input_line in open('input.txt')]
-    create_map(coord_list)
+    COORD_LIST = [parse_input(input_line) for input_line in open('input.txt')]
+    create_map(COORD_LIST)
